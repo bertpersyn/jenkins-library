@@ -1,16 +1,82 @@
-# ${docGenStepName}
+# checkChangeInDevelopment
 
-## ${docGenDescription}
+## Description
+
+Checks if a Change Document in SAP Solution Manager is in status 'in development'. The change document id is retrieved from the git commit history. The change document id
+can also be provided via parameter `changeDocumentId`. Any value provided as parameter has a higher precedence than a value from the commit history.
+
+By default the git commit messages between `origin/master` and `HEAD` are scanned for a line like `ChangeDocument : <changeDocumentId>`. The commit
+range and the pattern can be configured. For details see 'parameters' table.
 
 ## Prerequisites
 
 * **[Change Management Client 2.0.0 or compatible version](http://central.maven.org/maven2/com/sap/devops/cmclient/dist.cli/)** - available for download on Maven Central.
 
-## ${docGenParameters}
+## Parameters
 
-## ${docGenConfiguration}
+| name | mandatory | default | possible values |
+|------|-----------|---------|-----------------|
+| `changeDocumentId` | yes |  |  |
+| `changeManagement/changeDocumentLabel` | no | `ChangeDocument\s?:` | regex pattern |
+| `changeManagement/clientOpts` | no | `` |  |
+| `changeManagement/credentialsId` | no | `CM` |  |
+| `changeManagement/endpoint` | yes |  |  |
+| `changeManagement/git/format` | no | `%b` | see `git log --help` |
+| `changeManagement/git/from` | no | `origin/master` |  |
+| `changeManagement/git/to` | no | `HEAD` |  |
+| `failIfStatusIsNotInDevelopment` | no | `true` | `true`, `false` |
+| `script` | yes |  |  |
 
-## ${docJenkinsPluginDependencies}
+* `changeDocumentId` - The id of the change document to transport. If not provided, it is retrieved from the git commit history.
+* `changeManagement/changeDocumentLabel` - A pattern used for identifying lines holding the change document id.
+* `changeManagement/clientOpts` - Additional options for cm command line client, e.g. JAVA_OPTS.
+* `changeManagement/credentialsId` - The id of the credentials to connect to the Solution Manager. The credentials needs to be maintained on Jenkins.
+* `changeManagement/endpoint` - The service endpoint, e.g. Solution Manager, ABAP System.
+* `changeManagement/git/format` - Specifies what part of the commit is scanned. By default the body of the commit message is scanned.
+* `changeManagement/git/from` - The starting point for retrieving the change document id.
+* `changeManagement/git/to` - The end point for retrieving the change document id.
+* `failIfStatusIsNotInDevelopment` - When set to `false` the step will not fail in case the step is not in status 'in development'.
+* `script` - The common script environment of the Jenkinsfile running. Typically the reference to the script calling the pipeline step is provided with the `this` parameter, as in `script: this`. This allows the function to access the `commonPipelineEnvironment` for retrieving, e.g. configuration parameters.
+
+## Step configuration
+
+We recommend to define values of step parameters via [config.yml file](../configuration.md).
+
+In following sections of the config.yml the configuration is possible:
+
+| parameter | general | step/stage |
+|-----------|---------|------------|
+| `changeDocumentId` |  |  |
+| `changeManagement/changeDocumentLabel` | X | X |
+| `changeManagement/clientOpts` | X | X |
+| `changeManagement/credentialsId` | X | X |
+| `changeManagement/endpoint` | X | X |
+| `changeManagement/git/format` | X | X |
+| `changeManagement/git/from` | X | X |
+| `changeManagement/git/to` | X | X |
+| `failIfStatusIsNotInDevelopment` |  | X |
+| `script` |  |  |
+
+## Dependencies
+
+The step depends on the following Jenkins plugins
+
+* [credentials-binding](https://plugins.jenkins.io/credentials-binding)
+* [docker](https://plugins.jenkins.io/docker)
+* [kubernetes](https://plugins.jenkins.io/kubernetes)
+* [pipeline-utility-steps](https://plugins.jenkins.io/pipeline-utility-steps)
+* [workflow-basic-steps](https://plugins.jenkins.io/workflow-basic-steps)
+* [workflow-cps-global-lib](https://plugins.jenkins.io/workflow-cps-global-lib)
+* [workflow-durable-task-step](https://plugins.jenkins.io/workflow-durable-task-step)
+
+The kubernetes plugin is only used if running in a kubernetes environment.
+Transitive dependencies are omitted.
+
+The list might be incomplete.
+
+Consider using the [ppiper/jenkins-master](https://cloud.docker.com/u/ppiper/repository/docker/ppiper/jenkins-master)
+docker image. This images comes with preinstalled plugins.
+
 
 ## Exceptions
 

@@ -1,6 +1,8 @@
-# ${docGenStepName}
+# checksPublishResults
 
-## ${docGenDescription}
+## Description
+
+This step can publish static check results from various sources.
 
 ## Prerequisites
 
@@ -13,7 +15,31 @@
   * [warnings](https://plugins.jenkins.io/warnings)
   * [core](https://plugins.jenkins.io/core)
 
-## ${docGenParameters}
+## Parameters
+
+| name | mandatory | default | possible values |
+|------|-----------|---------|-----------------|
+| `aggregation` | no | `[active:true, thresholds:[fail:[high:0]]]` | `true`, `false`, `Map` |
+| `archive` | no | `false` |  |
+| `checkstyle` | no | `[pattern:**/target/checkstyle-result.xml, archive:true, active:false, thresholds:[fail:[high:0]]]` | `true`, `false`, `Map` |
+| `cpd` | no | `[pattern:**/target/cpd.xml, archive:true, active:false, thresholds:[fail:[high:0]]]` | `true`, `false`, `Map` |
+| `eslint` | no | `[pattern:**/eslint.xml, archive:true, active:false, thresholds:[fail:[high:0]]]` | `true`, `false`, `Map` |
+| `findbugs` | no | `[pattern:**/target/findbugsXml.xml, **/target/findbugs.xml, archive:true, active:false, thresholds:[fail:[high:0]]]` | `true`, `false`, `Map` |
+| `pmd` | no | `[pattern:**/target/pmd.xml, archive:true, active:false, thresholds:[fail:[high:0]]]` | `true`, `false`, `Map` |
+| `pylint` | no | `[pattern:**/pylint.log, archive:true, active:false, thresholds:[fail:[high:0]]]` | `true`, `false`, `Map` |
+| `script` | yes |  |  |
+| `tasks` | no | `[pattern:**/*.java, low:, normal:TODO,REVISE,XXX, high:FIXME, archive:true, active:false, thresholds:[fail:[high:0]]]` | `true`, `false`, `Map` |
+
+* `aggregation` - Allows to publish the check results.
+* `archive` - 
+* `checkstyle` - Publishes Checkstyle findings with the [Checkstyle plugin](https://plugins.jenkins.io/checkstyle).
+* `cpd` - Publishes CPD findings with the [DRY plugin](https://plugins.jenkins.io/dry).
+* `eslint` - Publishes ESLint findings (in [JSLint format](https://eslint.org/docs/user-guide/formatters/)) with the [Warnings plugin](https://plugins.jenkins.io/warnings).
+* `findbugs` - Publishes Findbugs findings with the [Findbugs plugin](https://plugins.jenkins.io/findbugs).
+* `pmd` - Publishes PMD findings with the [PMD plugin](https://plugins.jenkins.io/pmd).
+* `pylint` - Publishes PyLint findings with the [Warnings plugin](https://plugins.jenkins.io/warnings), pylint needs to run with `--output-format=parseable` option.
+* `script` - The common script environment of the Jenkinsfile running. Typically the reference to the script calling the pipeline step is provided with the `this` parameter, as in `script: this`. This allows the function to access the `commonPipelineEnvironment` for retrieving, e.g. configuration parameters.
+* `tasks` - Searches and publishes TODOs in files with the [Task Scanner Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Task+Scanner+Plugin).
 
 ### aggregation
 
@@ -80,9 +106,40 @@
 | archive | no | `true` | `true`, `false` |
 | thresholds | no | none | see [thresholds](#thresholds) |
 
-## ${docGenConfiguration}
+## Step configuration
 
-## ${docJenkinsPluginDependencies}
+We recommend to define values of step parameters via [config.yml file](../configuration.md).
+
+In following sections of the config.yml the configuration is possible:
+
+| parameter | general | step/stage |
+|-----------|---------|------------|
+| `aggregation` |  | X |
+| `archive` |  | X |
+| `checkstyle` |  | X |
+| `cpd` |  | X |
+| `eslint` |  | X |
+| `findbugs` |  | X |
+| `pmd` |  | X |
+| `pylint` |  | X |
+| `script` |  |  |
+| `tasks` |  | X |
+
+## Dependencies
+
+The step depends on the following Jenkins plugins
+
+* [pipeline-utility-steps](https://plugins.jenkins.io/pipeline-utility-steps)
+* [workflow-basic-steps](https://plugins.jenkins.io/workflow-basic-steps)
+* [workflow-cps-global-lib](https://plugins.jenkins.io/workflow-cps-global-lib)
+
+Transitive dependencies are omitted.
+
+The list might be incomplete.
+
+Consider using the [ppiper/jenkins-master](https://cloud.docker.com/u/ppiper/repository/docker/ppiper/jenkins-master)
+docker image. This images comes with preinstalled plugins.
+
 
 ### Thresholds
 

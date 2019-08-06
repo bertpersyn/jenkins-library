@@ -1,6 +1,22 @@
-# ${docGenStepName}
+# influxWriteData
 
-## ${docGenDescription}
+## Description
+
+Since your Continuous Delivery Pipeline in Jenkins provides your productive development and delivery infrastructure you should monitor the pipeline to ensure it runs as expected. How to setup this monitoring is described in the following.
+
+You basically need three components:
+
+- The [InfluxDB Jenkins plugin](https://wiki.jenkins-ci.org/display/JENKINS/InfluxDB+Plugin) which allows you to send build metrics to InfluxDB servers
+- The [InfluxDB](https://www.influxdata.com/time-series-platform/influxdb/) to store this data (Docker available)
+- A [Grafana](http://grafana.org/) dashboard to visualize the data stored in InfluxDB (Docker available)
+
+!!! note "no InfluxDB available?"
+    If you don't have an InfluxDB available yet this step will still provide you some benefit.
+
+    It will create following files for you and archive them into your build:
+
+    * `jenkins_data.json`: This file gives you build-specific information, like e.g. build result, stage where the build failed
+    * `influx_data.json`: This file gives you detailed information about your pipeline, e.g. stage durations, steps executed, ...
 
 ## Prerequisites
 
@@ -63,11 +79,64 @@ You need to define the influxDB server in your pipeline as it is defined in the 
 influxDBServer=jenkins
 ```
 
-## ${docGenParameters}
+## Parameters
 
-## ${docGenConfiguration}
+| name | mandatory | default | possible values |
+|------|-----------|---------|-----------------|
+| `artifactVersion` | no |  |  |
+| `customData` | no |  |  |
+| `customDataMap` | no |  |  |
+| `customDataMapTags` | no |  |  |
+| `customDataTags` | no |  |  |
+| `influxPrefix` | no |  |  |
+| `influxServer` | no | `` |  |
+| `script` | yes |  |  |
+| `wrapInNode` | no |  |  |
 
-## ${docJenkinsPluginDependencies}
+* `artifactVersion` - Defines the version of the current artifact. Defaults to `commonPipelineEnvironment.getArtifactVersion()`
+* `customData` - Defines custom data (map of key-value pairs) to be written to Influx into measurement `jenkins_custom_data`. Defaults to `commonPipelineEnvironment.getInfluxCustomData()`
+* `customDataMap` - Defines a map of measurement names containing custom data (map of key-value pairs) to be written to Influx. Defaults to `commonPipelineEnvironment.getInfluxCustomDataMap()`
+* `customDataMapTags` - Defines a map of measurement names containing tags (map of key-value pairs) to be written to Influx. Defaults to `commonPipelineEnvironment.getInfluxCustomDataTags()`
+* `customDataTags` - Defines tags (map of key-value pairs) to be written to Influx into measurement `jenkins_custom_data`. Defaults to `commonPipelineEnvironment.getInfluxCustomDataTags()`
+* `influxPrefix` - Defines a custom prefix. For example in multi branch pipelines, where every build is named after the branch built and thus you have different builds called 'master' that report different metrics.
+* `influxServer` - Defines the name of the Influx server as configured in Jenkins global configuration.
+* `script` - The common script environment of the Jenkinsfile running. Typically the reference to the script calling the pipeline step is provided with the `this` parameter, as in `script: this`. This allows the function to access the `commonPipelineEnvironment` for retrieving, e.g. configuration parameters.
+* `wrapInNode` - Defines if a dedicated node/executor should be created in the pipeline run. This is especially relevant when running the step in a declarative `POST` stage where by default no executor is available.
+
+## Step configuration
+
+We recommend to define values of step parameters via [config.yml file](../configuration.md).
+
+In following sections of the config.yml the configuration is possible:
+
+| parameter | general | step/stage |
+|-----------|---------|------------|
+| `artifactVersion` |  | X |
+| `customData` |  | X |
+| `customDataMap` |  | X |
+| `customDataMapTags` |  | X |
+| `customDataTags` |  | X |
+| `influxPrefix` |  | X |
+| `influxServer` |  | X |
+| `script` |  |  |
+| `wrapInNode` |  | X |
+
+## Dependencies
+
+The step depends on the following Jenkins plugins
+
+* [pipeline-utility-steps](https://plugins.jenkins.io/pipeline-utility-steps)
+* [workflow-basic-steps](https://plugins.jenkins.io/workflow-basic-steps)
+* [workflow-cps-global-lib](https://plugins.jenkins.io/workflow-cps-global-lib)
+* [workflow-durable-task-step](https://plugins.jenkins.io/workflow-durable-task-step)
+
+Transitive dependencies are omitted.
+
+The list might be incomplete.
+
+Consider using the [ppiper/jenkins-master](https://cloud.docker.com/u/ppiper/repository/docker/ppiper/jenkins-master)
+docker image. This images comes with preinstalled plugins.
+
 
 ## Example
 

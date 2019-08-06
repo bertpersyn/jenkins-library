@@ -5,7 +5,7 @@
 
 #Project Setup
 general:
-  collectTelemetryData: true
+  collectTelemetryData: false
   changeManagement:
     type: 'NONE' # SOLMAN, CTS, NONE
     transportRequestLabel: 'TransportRequest\s?:'

@@ -1,11 +1,48 @@
-# ${docGenStepName}
+# pipelineStashFilesAfterBuild
 
 ## Prerequsites
 
 none
 
-## ${docGenParameters}
+## Parameters
 
-## ${docGenConfiguration}
+| name | mandatory | default | possible values |
+|------|-----------|---------|-----------------|
+| `noDefaultExludes` | no | `[]` |  |
+| `script` | yes |  |  |
+| `stashExcludes` | no | `[buildResult:, checkmarx:**/*.mockserver.js, node_modules/**/*.js, classFiles:, sonar:]` |  |
+| `stashIncludes` | no | `[buildResult:**/target/*.jar, **/*.mtar, checkmarx:**/*.js, **/*.scala, **/*.py, **/*.go, **/*.d, **/*.di, **/*.xml, **/*.html, classFiles:**/target/classes/**/*.class, **/target/test-classes/**/*.class, sonar:**/jacoco*.exec, **/sonar-project.properties]` |  |
 
-## ${docJenkinsPluginDependencies}
+* `noDefaultExludes` - By default certain files are excluded from stashing (e.g. `.git` folder). Details can be found as per [Pipeline basic step `stash](https://jenkins.io/doc/pipeline/steps/workflow-basic-steps/#stash-stash-some-files-to-be-used-later-in-the-build). This parameter allows to provide a list of stash names for which the standard exclude behavior should be switched off. This will allow you to also stash directories like `.git`.
+* `script` - The common script environment of the Jenkinsfile running. Typically the reference to the script calling the pipeline step is provided with the `this` parameter, as in `script: this`. This allows the function to access the `commonPipelineEnvironment` for retrieving, e.g. configuration parameters.
+* `stashExcludes` - Can be used to overwrite the default behavior of existing stashes as well as to define additional stashes. This parameter handles the _excludes_ and can be defined as a map of stash name and exclude patterns. Exclude pattern has to be a string with comma separated patterns as per [Pipeline basic step `stash`](https://jenkins.io/doc/pipeline/steps/workflow-basic-steps/#stash-stash-some-files-to-be-used-later-in-the-build)
+* `stashIncludes` - Can be used to overwrite the default behavior of existing stashes as well as to define additional stashes. This parameter handles the _includes_ and can be defined as a map of stash name and include patterns. Include pattern has to be a string with comma separated patterns as per [Pipeline basic step `stash`](https://jenkins.io/doc/pipeline/steps/workflow-basic-steps/#stash-stash-some-files-to-be-used-later-in-the-build)
+
+## Step configuration
+
+We recommend to define values of step parameters via [config.yml file](../configuration.md).
+
+In following sections of the config.yml the configuration is possible:
+
+| parameter | general | step/stage |
+|-----------|---------|------------|
+| `noDefaultExludes` |  | X |
+| `script` |  |  |
+| `stashExcludes` |  | X |
+| `stashIncludes` |  | X |
+
+## Dependencies
+
+The step depends on the following Jenkins plugins
+
+* [pipeline-utility-steps](https://plugins.jenkins.io/pipeline-utility-steps)
+* [workflow-basic-steps](https://plugins.jenkins.io/workflow-basic-steps)
+* [workflow-cps-global-lib](https://plugins.jenkins.io/workflow-cps-global-lib)
+
+Transitive dependencies are omitted.
+
+The list might be incomplete.
+
+Consider using the [ppiper/jenkins-master](https://cloud.docker.com/u/ppiper/repository/docker/ppiper/jenkins-master)
+docker image. This images comes with preinstalled plugins.
+

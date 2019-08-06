@@ -1,6 +1,8 @@
-# ${docGenStepName}
+# testsPublishResults
 
-## ${docGenDescription}
+## Description
+
+This step can publish test results from various sources.
 
 ## Prerequsites
 
@@ -26,7 +28,23 @@ testsPublishResults(
 )
 ```
 
-## ${docGenParameters}
+## Parameters
+
+| name | mandatory | default | possible values |
+|------|-----------|---------|-----------------|
+| `cobertura` | no | `[pattern:**/target/coverage/cobertura-coverage.xml, onlyStableBuilds:true, allowEmptyResults:true, archive:false, active:false]` | `true`, `false`, `Map` |
+| `failOnError` | no | `false` | `true`, `false` |
+| `jacoco` | no | `[pattern:**/target/*.exec, allowEmptyResults:true, archive:false, active:false]` | `true`, `false`, `Map` |
+| `jmeter` | no | `[pattern:**/*.jtl, errorFailedThreshold:20, errorUnstableThreshold:10, errorUnstableResponseTimeThreshold:, relativeFailedThresholdPositive:0, relativeFailedThresholdNegative:0, relativeUnstableThresholdPositive:0, relativeUnstableThresholdNegative:0, modeOfThreshold:false, modeThroughput:false, nthBuildNumber:0, configType:PRT, failBuildIfNoResultFile:false, compareBuildPrevious:true, allowEmptyResults:true, archive:false, active:false]` | `true`, `false`, `Map` |
+| `junit` | no | `[pattern:**/TEST-*.xml, updateResults:false, allowEmptyResults:true, archive:false, active:false]` | `true`, `false`, `Map` |
+| `script` | yes |  |  |
+
+* `cobertura` - Publishes code coverage with the [Cobertura plugin](https://plugins.jenkins.io/cobertura).
+* `failOnError` - If it is set to `true` the step will fail the build if JUnit detected any failing tests.
+* `jacoco` - Publishes code coverage with the [JaCoCo plugin](https://plugins.jenkins.io/jacoco).
+* `jmeter` - Publishes performance test results with the [Performance plugin](https://plugins.jenkins.io/performance).
+* `junit` - Publishes test results files in JUnit format with the [JUnit Plugin](https://plugins.jenkins.io/junit).
+* `script` - The common script environment of the Jenkinsfile running. Typically the reference to the script calling the pipeline step is provided with the `this` parameter, as in `script: this`. This allows the function to access the `commonPipelineEnvironment` for retrieving, e.g. configuration parameters.
 
 ### junit
 
@@ -77,9 +95,40 @@ testsPublishResults(
 | archive | no | `false` | true, false |
 | allowEmptyResults | no | `true` | true, false |
 
-## ${docGenConfiguration}
+## Step configuration
 
-## ${docJenkinsPluginDependencies}
+We recommend to define values of step parameters via [config.yml file](../configuration.md).
+
+In following sections of the config.yml the configuration is possible:
+
+| parameter | general | step/stage |
+|-----------|---------|------------|
+| `cobertura` | X | X |
+| `failOnError` |  | X |
+| `jacoco` | X | X |
+| `jmeter` | X | X |
+| `junit` | X | X |
+| `script` |  |  |
+
+## Dependencies
+
+The step depends on the following Jenkins plugins
+
+* [cobertura](https://plugins.jenkins.io/cobertura)
+* [jacoco](https://plugins.jenkins.io/jacoco)
+* [junit](https://plugins.jenkins.io/junit)
+* [performance](https://plugins.jenkins.io/performance)
+* [pipeline-utility-steps](https://plugins.jenkins.io/pipeline-utility-steps)
+* [workflow-basic-steps](https://plugins.jenkins.io/workflow-basic-steps)
+* [workflow-cps-global-lib](https://plugins.jenkins.io/workflow-cps-global-lib)
+
+Transitive dependencies are omitted.
+
+The list might be incomplete.
+
+Consider using the [ppiper/jenkins-master](https://cloud.docker.com/u/ppiper/repository/docker/ppiper/jenkins-master)
+docker image. This images comes with preinstalled plugins.
+
 
 ## Side effects
 

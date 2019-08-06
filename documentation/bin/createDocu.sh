@@ -18,7 +18,7 @@ do
 done
 
 export CLASSPATH_FILE='target/cp.txt'
-mvn clean test dependency:build-classpath -Dmdep.outputFile=${CLASSPATH_FILE} > /dev/null 2>&1
+mvn clean test dependency:build-classpath -Dmdep.includeScope=compile -Dmdep.outputFile=${CLASSPATH_FILE} > /dev/null 2>&1
 
 # --in: is created by the unit tests. It contains a mapping between the test case (name is
 # already adjusted).
@@ -32,15 +32,15 @@ groovy  "${d}resolveTransitiveCalls" -in target/trackedCalls.json --out "${CALLS
 [ -f "${CALLS}" ] || { echo "File \"${CALLS}\" does not exist." ; exit 1; }
 
 docker run \
-    -w "${WS_IN}" \
-    --env calls="${WS_IN}/${STEP_CALL_MAPPING_FILE_NAME}" \
-    --env result="${WS_IN}/${PLUGIN_MAPPING_FILE_NAME}" \
-    -v "${WS_OUT}:${WS_IN}"  \
+    -w "/${WS_IN}" \
+    --env calls="/${WS_IN}/${STEP_CALL_MAPPING_FILE_NAME}" \
+    --env result="/${WS_IN}/${PLUGIN_MAPPING_FILE_NAME}" \
+    -v "/${WS_OUT}:${WS_IN}"  \
     ppiper/jenkinsfile-runner \
         -ns \
         -f Jenkinsfile \
-        --runWorkspace /workspace
+        --runWorkspace //workspace
 
 [ -f "${PLUGIN_MAPPING}" ] || { echo "Result file containing step to plugin mapping not found (${PLUGIN_MAPPING})."; exit 1;  }
 
-groovy -cp "target/classes:$(cat $CLASSPATH_FILE)" "${d}createDocu" "${@}"
+groovy -cp "target/classes;$(cat $CLASSPATH_FILE)" "${d}createDocu" "${@}"
